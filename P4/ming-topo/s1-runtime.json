@@ -1,0 +1,40 @@
+{
+  "target": "bmv2",
+  "p4info": "build/switch.p4.p4info.txt",
+  "bmv2_json": "build/switch.json",
+  "table_entries": [
+    {
+      "table": "IngressImpl.forward.fwd_tb",
+      "match": {
+        "hdr.ipv4.dstAddr": ["192.168.2.2", 32]
+      },
+      "action_name": "IngressImpl.forward.ipv4_forward",
+      "action_params": {
+        "dstAddr": "02:00:00:00:00:02",
+        "port": 2
+      }
+    },
+    {
+      "table": "IngressImpl.forward.fwd_tb",
+      "match": {
+        "hdr.ipv4.dstAddr": ["192.168.2.100", 32]
+      },
+      "action_name": "IngressImpl.forward.ipv4_forward",
+      "action_params": {
+        "dstAddr": "02:00:00:00:00:02",
+        "port": 2
+      }
+    },
+    {
+      "table": "IngressImpl.forward.fwd_tb",
+      "match": {
+        "hdr.ipv4.dstAddr": ["192.168.1.2", 32]
+      },
+      "action_name": "IngressImpl.forward.ipv4_forward",
+      "action_params": {
+        "dstAddr": "AA:BB:BB:AA:01:01",
+        "port": 1
+      }
+    }
+  ]
+}
