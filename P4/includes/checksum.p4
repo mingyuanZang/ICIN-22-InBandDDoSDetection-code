@@ -1,4 +1,3 @@
-
 control VerifyChecksumImpl(inout headers_t hdr,
                            inout metadata meta) {
     apply {

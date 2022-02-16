@@ -69,30 +69,18 @@ header udp_t {
     bit<16> checksum;
 }
 
-
-header check_t {
-    bit<16> a;
-    bit<48> b;
-    bit<48> c; // how long the TCP header is
-    bit<48> d;
-    bit<16> e;
-
-}
-
-
-
 header field_sum_t{
     ip4Addr_t l3_srcAddr;
     ip4Addr_t l3_dstAddr;
     bit<8>    l3_proto;
     l4_port_t l4_srcPort;
     l4_port_t l4_dstPort;
-    pkt_num_count_t      tcp_pkt_num; // ming 
-    pkt_num_count_t      tcp_syn_num; 
-    pkt_num_count_t      tcp_rst_num; 
-    pkt_num_count_t      udp_pkt_num; 
+    pkt_num_count_t      tcp_pkt_num;
+    pkt_num_count_t      tcp_syn_num;
+    pkt_num_count_t      tcp_rst_num;
+    pkt_num_count_t      udp_pkt_num;
     pkt_num_count_t      pkt_num;
-    pkt_num_count_t      tcp_srcport_num; // bloom filter
+    pkt_num_count_t      unique_port_pairs_num; // bloom filter
 
 }
 
@@ -105,26 +93,26 @@ struct monitor_digest {
     bit<8>       l3_proto;   // 1 byte
     l4_port_t    l4_srcPort; // 2 bytes
     l4_port_t    l4_dstPort; // 2 bytes
-    pkt_num_count_t      tcp_pkt_num; 
-    pkt_num_count_t      tcp_syn_num; 
-    pkt_num_count_t      tcp_rst_num; 
-    pkt_num_count_t      udp_pkt_num; 
+    pkt_num_count_t      tcp_pkt_num;
+    pkt_num_count_t      tcp_syn_num;
+    pkt_num_count_t      tcp_rst_num;
+    pkt_num_count_t      udp_pkt_num;
     pkt_num_count_t      pkt_num;
-    pkt_num_count_t      tcp_srcport_num; // bloom filter
+    pkt_num_count_t      unique_port_pairs_num; // bloom filter
 
-} 
+}
 
 struct key_fields_t {
     l4_flag_t l4_flag;
 }
 
 header digest_count_t {
-    pkt_num_count_t      tcp_pkt_num; 
-    pkt_num_count_t     tcp_syn_num; 
-    pkt_num_count_t      tcp_rst_num; 
-    pkt_num_count_t      udp_pkt_num; 
+    pkt_num_count_t      tcp_pkt_num;
+    pkt_num_count_t      tcp_syn_num;
+    pkt_num_count_t      tcp_rst_num;
+    pkt_num_count_t      udp_pkt_num;
     pkt_num_count_t      pkt_num;
-    pkt_num_count_t      tcp_srcport_num; // bloom filter
+    pkt_num_count_t      unique_port_pairs_num; // bloom filter
 }
 
 
@@ -143,13 +131,13 @@ struct l4_metadata_t {
 struct metadata {
     key_fields_t kf;
     clone_type_t ct;
-    pkt_num_count_t      tcp_pkt_num; 
-    pkt_num_count_t      tcp_syn_num; 
-    pkt_num_count_t      tcp_rst_num; 
-    pkt_num_count_t      udp_pkt_num; 
-    pkt_num_count_t pkt_num;
-    pkt_num_count_t      tcp_srcport_num; // bloom filter
-    l4_metadata_t l4_metadata;
+    pkt_num_count_t      tcp_pkt_num;
+    pkt_num_count_t      tcp_syn_num;
+    pkt_num_count_t      tcp_rst_num;
+    pkt_num_count_t      udp_pkt_num;
+    pkt_num_count_t      pkt_num;
+    pkt_num_count_t      unique_port_pairs_num; // bloom filter
+    l4_metadata_t        l4_metadata;
 
 
 }
@@ -168,7 +156,6 @@ struct headers_t {
     l4_ports_t          l4_ports;
     tcp_t               tcp;
     udp_t               udp;
-    check_t             check;
     digest_count_t      digest_count;
 
 }

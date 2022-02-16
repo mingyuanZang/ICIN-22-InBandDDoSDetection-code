@@ -26,42 +26,40 @@ control IngressImpl(inout headers_t hdr,
     bit<32> reg_pos;
     bit<1> reg_val_one;
 
-    action compute_hashes(bit<16> port1, bit<16> port2){
+    // from https://github.com/p4lang/tutorials/blob/master/exercises/firewall/solution/firewall.p4
+    action compute_hashes(ip4Addr_t ipAddr1, ip4Addr_t ipAddr2, bit<16> port1, bit<16> port2,  bit<8>protocol){
        //Get register position
-       hash(reg_pos, HashAlgorithm.crc16, (bit<32>)0, {port1,
+       hash(reg_pos, HashAlgorithm.crc32, (bit<32>)0, {ipAddr1,
+                                                           ipAddr2,
+                                                           port1,
                                                            port2,
-                                                           hdr.ipv4.protocol},
+                                                           protocol},
                                                            (bit<32>)BLOOM_FILTER_ENTRIES);
     }
-
-
 
     apply{
 
         port_counters_ingress.apply(hdr, standard_metadata);
 
-        // Packet Count ming
+        // Packet Count
         pkt_counter.read(hdr.digest_count.pkt_num, meta.pkt_num);
         tcp_pkt_counter.read(hdr.digest_count.tcp_pkt_num, meta.tcp_pkt_num);
         udp_pkt_counter.read(hdr.digest_count.udp_pkt_num, meta.udp_pkt_num);
         tcp_syn_counter.read(hdr.digest_count.tcp_syn_num, meta.tcp_syn_num);
         tcp_rst_counter.read(hdr.digest_count.tcp_rst_num, meta.tcp_rst_num);
         // port counter
-        tcp_srcport_counter.read(hdr.digest_count.tcp_srcport_num, meta.tcp_srcport_num);
+        unique_port_pairs_counter.read(hdr.digest_count.unique_port_pairs_num, meta.unique_port_pairs_num);
 
         hdr.digest_count.pkt_num = hdr.digest_count.pkt_num + 1;
         pkt_counter.write(meta.pkt_num, hdr.digest_count.pkt_num);
 
-        // if (hdr.digest_count.pkt_num != 24) {
-
-
             if (hdr.tcp.isValid()) {
-                compute_hashes(hdr.l4_ports.l4_srcPort, hdr.l4_ports.l4_dstPort);
+                compute_hashes(hdr.ipv4.srcAddr, hdr.ipv4.dstAddr, hdr.l4_ports.l4_srcPort, hdr.l4_ports.l4_dstPort, hdr.ipv4.protocol);
                 // bloom filter
                 bloom_filter.read(reg_val_one, reg_pos);
                 if (reg_val_one != 1){
-                    hdr.digest_count.tcp_srcport_num = hdr.digest_count.tcp_srcport_num + 1;
-                    tcp_srcport_counter.write(meta.tcp_srcport_num, hdr.digest_count.tcp_srcport_num);
+                    hdr.digest_count.unique_port_pairs_num = hdr.digest_count.unique_port_pairs_num + 1;
+                    unique_port_pairs_counter.write(meta.unique_port_pairs_num, hdr.digest_count.unique_port_pairs_num);
 
                     bloom_filter.write(reg_pos, 1);
                 }
@@ -89,7 +87,7 @@ control IngressImpl(inout headers_t hdr,
 
 
 
-            // count time ming
+            // count time
             bit<2> time_flag;
             TIME_FLAG.read(time_flag, 0);
             time_flag = 0;
@@ -107,7 +105,7 @@ control IngressImpl(inout headers_t hdr,
 
 
             if (hdr.digest_count.pkt_num > 1){
-                if (delta_time > 500000) {
+                if (delta_time > 1000000) {
                     delta_time = 0;
                     last_time_reg.write((bit<32>)standard_metadata.ingress_port, cur_time);
                     time_flag = 2;
@@ -115,20 +113,19 @@ control IngressImpl(inout headers_t hdr,
 
                     mon_packet.apply(hdr, meta, standard_metadata);
 
-                    pkt_counter.write(0, 0);// Reset
+                    pkt_counter.write(0, 0);
                     tcp_pkt_counter.write(0, 0);
                     udp_pkt_counter.write(0, 0);
                     tcp_syn_counter.write(0, 0);
                     tcp_rst_counter.write(0, 0);
-
-                    bloom_filter.write(0,0); // reset bloom filter
-                    tcp_srcport_counter.write(0, 0);
+                    bloom_filter.write(0,0);
+                    unique_port_pairs_counter.write(0, 0);
                 }
             }
 
             forward.apply(hdr, meta, standard_metadata);
 
-         
+
 
     }
 }

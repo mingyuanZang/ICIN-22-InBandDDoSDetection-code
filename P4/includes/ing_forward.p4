@@ -25,7 +25,7 @@ control Forward(inout headers_t hdr,
             drop;
             NoAction;
         }
-        //default_action = drop;
+        default_action = drop;
     }
 
     apply {

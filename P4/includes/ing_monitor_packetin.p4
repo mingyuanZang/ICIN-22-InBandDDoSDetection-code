@@ -30,7 +30,7 @@ control Monitor_Packet(inout headers_t hdr,
              hdr.digest_count.tcp_rst_num,
              hdr.digest_count.udp_pkt_num,
              hdr.digest_count.pkt_num,
-             hdr.digest_count.tcp_srcport_num
+             hdr.digest_count.unique_port_pairs_num
              });
     }
 
@@ -51,7 +51,7 @@ control Monitor_Packet(inout headers_t hdr,
 
     apply {
         if (hdr.ipv4.isValid()) {
-           
+
             packet_check.apply();
         }
     }

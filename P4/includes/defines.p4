@@ -27,7 +27,7 @@ typedef bit<9>  port_t;
 typedef bit<16> l4_port_t;
 typedef bit<6>  l4_flag_t;
 
-typedef bit<32>  pkt_num_count_t; //ming
+typedef bit<32>  pkt_num_count_t;
 typedef bit<48> time_t;
 
 
@@ -58,7 +58,7 @@ const bit<32> REPORT_MIRROR_SESSION_ID = 500;
 
 
 
-// count the number of pkts/tcp/udp seen since the last probe
+// count the number of pkts in window period
 register<bit<32>>(MAX_PORTS) pkt_counter;
 register<bit<32>>(MAX_PORTS) tcp_pkt_counter;
 register<bit<32>>(MAX_PORTS) udp_pkt_counter;
@@ -66,7 +66,7 @@ register<bit<32>>(MAX_PORTS) tcp_syn_counter;
 register<bit<32>>(MAX_PORTS) tcp_rst_counter;
 
 // bloom filter
-register<bit<32>>(MAX_PORTS) tcp_srcport_counter;
+register<bit<32>>(MAX_PORTS) unique_port_pairs_counter;
 // time counter
 register<time_t>(MAX_PORTS) last_time_reg;
 register<bit<2>>(1) TIME_FLAG;

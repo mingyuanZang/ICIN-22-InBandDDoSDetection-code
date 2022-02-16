@@ -1,0 +1,26 @@
+{
+    "hosts": {
+        "h1": {"ip": "192.168.1.2/24", "mac": "AA:BB:BB:AA:01:01",
+               "commands":["route add default gw 192.168.1.1 dev eth0",
+                           "arp -i eth0 -s 192.168.1.1 11:00:00:00:11:11"]},
+        "h2": {"ip": "192.168.2.2/24", "mac": "02:00:00:00:00:02",
+               "commands":["route add default gw 192.168.2.1 dev eth0",
+                           "arp -i eth0 -s 192.168.2.1 02:00:00:00:00:01"]},
+        "h3": {"ip": "192.168.2.100/24", "mac": "02:00:00:00:00:64",
+               "commands":["route add default gw 192.168.2.1 dev eth0",
+                           "arp -i eth0 -s 192.168.2.1 02:00:00:00:00:01"]}
+    },
+    "switches": {
+        "s1": {
+          "runtime_json" : "topo/s1-runtime.json"
+        },
+        "s2": {
+          "cli_input" : "topo/s2-commands.txt",
+          "runtime_json" : "topo/s2-runtime.json"
+        }
+    },
+    "links": [
+        ["h1", "s1-p1"], ["h2", "s2-p2"], ["h3", "s2-p3"],
+        ["s1-p2", "s2-p1"]
+    ]
+}

@@ -59,14 +59,12 @@ control Clone_Type(inout headers_t hdr,
         hdr.sum.l3_proto = hdr.ipv4.protocol;
         hdr.sum.l4_srcPort = hdr.l4_ports.l4_srcPort;
         hdr.sum.l4_dstPort = hdr.l4_ports.l4_dstPort;
-        hdr.sum.tcp_pkt_num = hdr.digest_count.tcp_pkt_num; //ming
-
-        hdr.sum.tcp_syn_num = hdr.digest_count.tcp_syn_num; //ming
-        hdr.sum.tcp_rst_num = hdr.digest_count.tcp_rst_num; //ming
-        hdr.sum.udp_pkt_num = hdr.digest_count.udp_pkt_num; //ming
+        hdr.sum.tcp_pkt_num = hdr.digest_count.tcp_pkt_num;
+        hdr.sum.tcp_syn_num = hdr.digest_count.tcp_syn_num;
+        hdr.sum.tcp_rst_num = hdr.digest_count.tcp_rst_num;
+        hdr.sum.udp_pkt_num = hdr.digest_count.udp_pkt_num;
         hdr.sum.pkt_num = hdr.digest_count.pkt_num;
-
-        hdr.sum.tcp_srcport_num = hdr.digest_count.tcp_srcport_num; //ming
+        hdr.sum.unique_port_pairs_num = hdr.digest_count.unique_port_pairs_num;
 
         hdr.rep_udp.len = hdr.rep_udp.len + KFS_LEN;
         hdr.rep_ipv4.totalLen = hdr.rep_ipv4.totalLen + KFS_LEN;
